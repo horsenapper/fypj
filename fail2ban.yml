@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install Fail2Ban
+      apt:
+        name: fail2ban
+        state: present
+    - name: Copy jail.local config
+      copy:
+        src: /path/to/jail.local
+        dest: /etc/fail2ban/jail.local
+    - name: Restart Fail2Ban
+      service:
+        name: fail2ban
+        state: restarted
+    - name: Update all packages
+      apt:
+        upgrade: dist
+
