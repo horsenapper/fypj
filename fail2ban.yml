@@ -8,7 +8,7 @@
         state: present
     - name: Copy jail.local config
       copy:
-        src: /path/to/jail.local
+        src: /etc/fail2ban/jail.local
         dest: /etc/fail2ban/jail.local
     - name: Restart Fail2Ban
       service:
