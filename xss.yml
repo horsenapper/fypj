@@ -1,0 +1,25 @@
+---
+- hosts: ubuntu
+  become: yes
+  tasks:
+    - name: Update and upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Ensure mod_headers is enabled
+      apache2_module:
+        name: headers
+        state: present
+
+    - name: Copy hardening policy
+      copy:
+        src: /path/to/local/000-default.conf
+        dest: /etc/apache2/sites-available/000-default.conf
+      notify: restart apache
+
+  handlers:
+    - name: restart apache
+      service:
+        name: apache2
+        state: restarted
