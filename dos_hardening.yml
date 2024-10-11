@@ -1,6 +1,6 @@
 ---
 - name: DoS Hardening Policy
-  hosts: ubuntu
+  hosts: all
   become: yes
   tasks:
     - name: Add iptables rule to limit connections
