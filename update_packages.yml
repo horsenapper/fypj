@@ -1,0 +1,12 @@
+---
+- name: Update Ubuntu Packages
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt package manager cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
