@@ -1,0 +1,16 @@
+---
+- name: DoS Hardening Policy
+  hosts: ubuntu
+  become: yes
+  tasks:
+    - name: Add iptables rule to limit connections
+      command: iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 10 -j DROP
+
+    - name: Enable syncookies
+      lineinfile:
+        path: /etc/sysctl.conf
+        regexp: '^net.ipv4.tcp_syncookies'
+        line: 'net.ipv4.tcp_syncookies = 1'
+
+    - name: Apply sysctl changes
+      command: sysctl -p
