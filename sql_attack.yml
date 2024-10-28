@@ -15,8 +15,8 @@
 
     - name: Copy ModSecurity rule set
       copy:
-        src: /etc/modsecurity/crs-setup.conf
-        dest: /etc/modsecurity/crs-setup.conf
+        src: /etc/modsecurity/crs/crs-setup.conf
+        dest: /etc/modsecurity/crs/crs-setup.conf
         owner: root
         group: root
         mode: '0644'
