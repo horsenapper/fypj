@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install Apache and ModSecurity
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apache2
+        - libapache2-mod-security2
+
+    - name: Enable ModSecurity
+      command: a2enmod security2
+
+    - name: Copy ModSecurity rule set
+      copy:
+        src: /etc/modsecurity/crs-setup.conf
+        dest: /etc/modsecurity/crs-setup.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
