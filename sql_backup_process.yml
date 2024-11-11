@@ -1,0 +1,16 @@
+---
+- name: Backup and Archive SQL Injection Hardening Policy
+  hosts: all
+  become: yes
+  tasks:
+    - name: Backup hardening policy
+      copy:
+        src: /etc/modsecurity/crs/crs-setup.conf
+        dest: ~/fypj/policy_backups/crs-setup.conf.bak
+        remote_src: yes
+
+    - name: Archive the backup
+      archive:
+        path: ~/fypj/policy_backups/crs-setup.conf.bak
+        dest: ~/fypj/policy_backups/sql_injection_policy_backup.tar.gz
+        format: gz
