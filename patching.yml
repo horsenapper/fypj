@@ -1,6 +1,7 @@
 ---
 - name: Automate Linux Patching
   hosts: all
+  become: yes
   tasks:
     - name: Update apt cache
       ansible.builtin.apt:
