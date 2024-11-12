@@ -1,0 +1,55 @@
+---
+- name: Backup and Archive SQL Injection Hardening Policy
+  hosts: all
+  become: yes
+  tasks:
+
+# backup process for dos attack
+    - name: Backup iptables rules
+      ansible.builtin.command:
+        cmd: iptables-save > /etc/iptables/rules.v4.bak
+      register: backup_iptables
+      changed_when: false  # Doesn't modify the system
+
+    - name: Restore iptables rules
+      ansible.builtin.command:
+        cmd: iptables-restore < /etc/iptables/rules.v4.bak
+      register: restore_iptables
+      when: backup_iptables is succeeded
+
+    - name: Create archive directory if not exists
+      ansible.builtin.file:
+        path: /root/security_policy_archives
+        state: directory
+        mode: '0755'
+
+    - name: Archive configuration files
+      ansible.builtin.archive:
+        path: /etc/sysctl.conf /etc/iptables/rules.v4.bak
+        dest: /root/security_policy_archives/security_policies_backup.tar.gz
+
+    - name: Verify archive creation
+      ansible.builtin.stat:
+        path: /root/security_policy_archives/security_policies_backup.tar.gz
+      register: archive_check
+
+    - name: Print archive status
+      ansible.builtin.debug:
+        msg: "Archive was successfully created: {{ archive_check.stat.exists }}"
+    - name: Create backup directory
+      ansible.builtin.file:
+        path: /root/fypj/policy_backups
+        state: directory
+        mode: '0755'
+#backup process for sql injection
+    - name: Backup hardening policy
+      copy:
+        src: /etc/modsecurity/crs/crs-setup.conf
+        dest: ~/fypj/policy_backups/crs-setup.conf.bak
+        remote_src: yes
+
+    - name: Archive the backup
+      archive:
+        path: ~/fypj/policy_backups/crs-setup.conf.bak
+        dest: ~/fypj/policy_backups/sql_injection_policy_backup.tar.gz
+        format: gz
