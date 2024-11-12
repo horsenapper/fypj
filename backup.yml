@@ -13,10 +13,11 @@
       changed_when: false  # Doesn't modify the system
 
     - name: Restore iptables rules
-      ansible.builtin.command:
-        cmd: iptables-restore < /etc/iptables/rules.v4.bak
-      register: restore_iptables
+      ansible.builtin.shell: iptables-restore < /etc/iptables/rules.v4.bak
+      args:
+        executable: /bin/bash
       when: backup_iptables is succeeded
+
 
     - name: Create archive directory if not exists
       ansible.builtin.file:
