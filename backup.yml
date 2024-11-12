@@ -2,7 +2,50 @@
 - name: Backup and Archive SQL Injection Hardening Policy
   hosts: all
   become: yes
+  vars:
+    backup_dir: /backup
+    backup_file: jail.local.backup
+    archive_file: backup_fail2ban.tar.gz
+    restore: false
   tasks:
+#backup process for ssh brute force attack
+    # Ensure backup directory exists
+    - name: Create backup directory if it does not exist
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    # Backup Fail2Ban configuration
+    - name: Backup Fail2Ban configuration
+      ansible.builtin.copy:
+        src: /etc/fail2ban/jail.local
+        dest: "{{ backup_dir }}/{{ backup_file }}"
+        remote_src: yes
+
+    # Archive backup file
+    - name: Archive Fail2Ban backup
+      ansible.builtin.archive:
+        path: "{{ backup_dir }}/{{ archive_file }}"
+        dest: "{{ backup_dir }}/{{ archive_file }}"
+        remote_src: yes
+
+     # Restore Fail2Ban configuration
+    - name: Restore Fail2Ban configuration
+      ansible.builtin.copy:
+        src: "{{ backup_dir }}/{{ backup_file }}"
+        dest: /etc/fail2ban/jail.local
+        remote_src: yes
+      when: restore | bool
+
+    - name: Restart Fail2Ban service after restore
+      ansible.builtin.service:
+        name: fail2ban
+        state: restarted
+      when: restore | bool
+
 #backup process for xss attack
     - name: Backup Apache configuration file
       ansible.builtin.copy:
