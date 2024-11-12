@@ -6,8 +6,9 @@
 
 # backup process for dos attack
     - name: Backup iptables rules
-      ansible.builtin.command:
-        cmd: iptables-save > /etc/iptables/rules.v4.bak
+      ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4.bak
+      args:
+        executable: /bin/bash
       register: backup_iptables
       changed_when: false  # Doesn't modify the system
 
