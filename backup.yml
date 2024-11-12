@@ -3,6 +3,30 @@
   hosts: all
   become: yes
   tasks:
+#backup process for xss attack
+    - name: Backup Apache configuration file
+      ansible.builtin.copy:
+        src: /etc/apache2/sites-available/000-default.conf
+        dest: /etc/apache2/sites-available/000-default.conf.bak
+        remote_src: yes
+
+    - name: Backup DVWA directory
+      ansible.builtin.command:
+        cmd: cp -r /var/www/html/DVWA /var/www/html/DVWA_backup
+
+    # Restore Tasks
+    - name: Restore Apache configuration file
+      ansible.builtin.copy:
+        src: /etc/apache2/sites-available/000-default.conf.bak
+        dest: /etc/apache2/sites-available/000-default.conf
+        remote_src: yes
+      when: restore is defined and restore | bool
+
+    - name: Restart Apache service
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+      when: restore is defined and restore | bool
 
 # backup process for dos attack
     - name: Backup iptables rules
