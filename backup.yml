@@ -28,9 +28,9 @@
     # Archive backup file
     - name: Archive Fail2Ban backup
       ansible.builtin.archive:
-        path: "{{ backup_dir }}/{{ archive_file }}"
-        dest: "{{ backup_dir }}/{{ archive_file }}"
-        remote_src: yes
+        path: "{{ backup_dir }}/{{ backup_file }}"  # Path to the file on the local system
+        dest: "{{ backup_dir }}/{{ archive_file }}"  # Destination for the archive
+        format: gz  # Specify the archive format (e.g., gz)
 
      # Restore Fail2Ban configuration
     - name: Restore Fail2Ban configuration
